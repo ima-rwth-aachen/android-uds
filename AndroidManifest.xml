@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.imazlwifu.uds"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <application
+        android:name="org.imazlwifu.uds.model.AppState"
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="org.imazlwifu.uds.UIActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.imazlwifu.uds.PreferencesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="org.imazlwifu.uds.ipc.StopServiceActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <service android:name="org.imazlwifu.uds.DataService" />
+
+        <receiver
+            android:name="org.imazlwifu.uds.ipc.AlarmReceiver" >
+            <intent-filter>
+                <action android:name="com.company.android.AlarmReceiver" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="org.imazlwifu.uds.ipc.DataReceiver" >
+            <intent-filter>
+                <action android:name="org.imazlwifu.uds.DataBroadcast" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="org.imazlwifu.uds.ipc.ServiceStarter" >
+            <intent-filter>
+                <action android:name="org.imazlwifu.uds.StartService" />
+                <!--action android:name="android.intent.action.BOOT_COMPLETED" /-->
+            </intent-filter>
+        </receiver>
+    </application>>
+
+</manifest>
