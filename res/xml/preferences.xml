@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Program settings" >
+        <EditTextPreference
+            android:key="remote_address"
+            android:title="Remote Server Address" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="auto_start"
+            android:title="Auto Start" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="show_in_notif_bar"
+            android:title="Show in notification bar" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="monitored" android:key="monitored" />
+
+</PreferenceScreen>
