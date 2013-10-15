@@ -55,7 +55,7 @@
             android:name="org.imazlwifu.uds.ipc.ServiceStarter" >
             <intent-filter>
                 <action android:name="org.imazlwifu.uds.StartService" />
-                <!--action android:name="android.intent.action.BOOT_COMPLETED" /-->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

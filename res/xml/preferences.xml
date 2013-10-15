@@ -8,11 +8,11 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="auto_start"
-            android:title="Auto Start" />
+            android:title="start on device boot" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="show_in_notif_bar"
-            android:title="Show in notification bar" />
+            android:key="show_notification"
+            android:title="show notification" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="monitored" android:key="monitored" />
