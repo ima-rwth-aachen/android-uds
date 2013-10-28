@@ -1,8 +1,7 @@
 package org.imazlwifu.uds;
 
-import org.imazlwifu.uds.ipc.DataReceiver;
 import org.imazlwifu.uds.ipc.StopServiceActivity;
-import org.imazlwifu.uds.model.AppState;
+import org.imazlwifu.uds.model.LibConfig;
 import org.imazlwifu.uds.model.Monitorable;
 
 import android.app.Notification;
@@ -10,29 +9,24 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+/**
+ * triggers updates of <code>Monitorable</code>s and possibly builds notification
+ * 
+ * @author Sascha Eiteneuer
+ *
+ */
 public class DataService extends Service {
-	final public static int defaultInterval = 7;
-	
-	private AppState state;
-	private DataReceiver receiver = new DataReceiver();
-	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 	
 		Log.d( "DataService", "started" );
-		
-		state = (AppState) getApplication();
-		
-		receiver.setState( state );
-		registerReceiver( receiver, new IntentFilter( "org.imazlwifu.uds.DataBroadcast" ) );
 	}
 	
 	@Override
@@ -44,21 +38,14 @@ public class DataService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d( "DataService", "id:"+ Integer.toString( startId ) );
 		
-		buildNotification();
+		buildNotification( startId );
 		
 		payload();
 		
 		return Service.START_STICKY;
 	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		unregisterReceiver( receiver );
-	}
 
-	private void buildNotification() {
+	private void buildNotification(  int iteration ) {
 		Log.d( "DataService", "Notification setup" );
 		
 		if( !PreferenceManager.getDefaultSharedPreferences( this ).getBoolean( "show_notification", true ) ) {
@@ -70,11 +57,13 @@ public class DataService extends Service {
 				.addNextIntent( new Intent( this, StopServiceActivity.class) );
 			
 			Notification n = new NotificationCompat.Builder( this )
-				.setContentTitle( "UDS monitoring update" )
-		    	.setContentText( "tap to stop service" )
-		    	.setSmallIcon( android.R.drawable.ic_menu_manage )
+				.setContentTitle( "monitoring updated" )
+		    	.setContentText( "swipe down to expand" )
+		    	.setSmallIcon( android.R.drawable.stat_notify_sync_noanim )
+		    	.setContentInfo( "iteration: "+ iteration )
 		    	.setAutoCancel( true )
-		    	.setContentIntent( stackBuilder.getPendingIntent( 0, 0 ) )
+		    	.addAction( android.R.drawable.ic_menu_delete, "stop monitoring", stackBuilder.getPendingIntent( 0, 0 ) )
+//		    	.setContentIntent( stackBuilder.getPendingIntent( 0, 0 ) )
 				.build();
 			
 			((NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE )).notify( 1, n );
@@ -82,17 +71,12 @@ public class DataService extends Service {
 	}
 	
 	private void payload() {
-		Log.d( "DataService", state.getDebugString() );
-		
-		for( Monitorable m : state.getMonitorables() ) {
-			if( state.getPreference( m ) ) {
+		for( Monitorable m : LibConfig.instance.getMonitorables() )
+			if( LibConfig.instance.getPreference( m ) )
 				m.updateData();
-				
-				// update UI
-				sendBroadcast( new Intent( "org.imazlwifu.uds.DataBroadcast" ) );
-			}
-		}
 		
+		Log.d( "debug", LibConfig.instance.getUDS().getDebugString() );
 		
+		sendBroadcast( new Intent( UDS.ACTION_DATA_BROADCAST ) );
 	}
 }

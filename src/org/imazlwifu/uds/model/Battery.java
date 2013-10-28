@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 
 public class Battery implements Monitorable {
 	public final static String NAME = "Battery";
@@ -14,9 +15,23 @@ public class Battery implements Monitorable {
 	
 	private Context context;
 	
-	public Battery( Context context ) {
-		this.context = context;
+	public Battery() {
 		values = new HashMap<String, Float>();
+	}
+
+	@Override
+	public void updateData() {
+		Intent battery = context.registerReceiver( null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );
+		Bundle extras = battery.getExtras();
+		
+		for( String s : extras.keySet() )
+			if( !s.contains( "icon" ) )
+				try {
+					float f = (Integer) extras.get( s );
+					
+					values.put( "Battery "+s, f );
+				} catch( Exception e ) {}
+		
 	}
 	
 	@Override
@@ -28,20 +43,10 @@ public class Battery implements Monitorable {
 	public Map<String, Float> values() {
 		return values;
 	}
-
+	
 	@Override
-	public void updateData() {
-		Intent battery = context.registerReceiver( null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED) );
-		Bundle extras = battery.getExtras();
-		
-		for( String s : extras.keySet() ) {
-			try {
-				float f = (Integer) extras.get( s );
-				
-				values.put( "Battery "+s, f );
-			} catch( Exception e ) {}
-		}
-		
+	public void setContext( Context context ) {
+		this.context = context;
 	}
 
 }

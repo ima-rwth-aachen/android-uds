@@ -27,6 +27,14 @@ public class MonitoredSensor implements Monitorable, SensorEventListener {
 		return sensor.getName();
 	}
 
+	/**
+	 * <p>
+	 * There might be multiple sensors with the same name.
+	 * E.g. HTTP Post Params behave like a set.
+	 * Therefore a unique key is formed by the expression:
+	 * </p >
+	 * <p><code style="text-indent:4em;">SensorName + '@' + Integer.toHexString( this.hashCode() )</code></p>
+	 */
 	@Override
 	public Map<String, Float> values() {
 		return values;
@@ -45,9 +53,15 @@ public class MonitoredSensor implements Monitorable, SensorEventListener {
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		for( float f : event.values )
-			values.put( sensor.getName(), f );
+			values.put( sensor.getName() +'@'+ Integer.toHexString( this.hashCode() ), f );
 
 		sensorManager.unregisterListener( this );
+	}
+
+	@Override
+	public void setContext(Context context) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

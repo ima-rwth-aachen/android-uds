@@ -2,6 +2,8 @@ package org.imazlwifu.uds.model;
 
 import java.util.Map;
 
+import android.content.Context;
+
 public interface Monitorable {
 	public String getName();
 	
@@ -17,4 +19,6 @@ public interface Monitorable {
 	 * see <code>Battery</code>
 	 */
 	public void updateData();
+
+	void setContext(Context context);
 }

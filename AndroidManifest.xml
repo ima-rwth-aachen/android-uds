@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,8 +15,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     
     <application
-        android:name="org.imazlwifu.uds.model.AppState"
-        android:allowBackup="true"
+        android:name="org.imazlwifu.uds.model.LibConfig"
+        android:persistent="true"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -24,7 +24,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -46,7 +45,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="org.imazlwifu.uds.ipc.DataReceiver" >
+            android:name="org.imazlwifu.uds.ipc.PublishingReceiver" >
             <intent-filter>
                 <action android:name="org.imazlwifu.uds.DataBroadcast" />
             </intent-filter>

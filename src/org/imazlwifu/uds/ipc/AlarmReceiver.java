@@ -6,6 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * Starts the <code>DataService</code> on broadcast by <code>AlarmManager</code>
+ * @author Sascha Eiteneuer
+ *
+ */
 public class AlarmReceiver extends BroadcastReceiver {
 
 	@Override
