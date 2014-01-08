@@ -1,8 +1,8 @@
 package org.imazlwifu.uds.ipc;
 
+import org.imazlwifu.uds.LibConfig;
 import org.imazlwifu.uds.Util;
 import org.imazlwifu.uds.model.Monitorable;
-import org.imazlwifu.uds.model.LibConfig;
 import org.imazlwifu.uds.rpc.DataPublisher;
 import org.imazlwifu.uds.rpc.HTTPRemoteConnection;
 
@@ -18,7 +18,7 @@ import android.content.Intent;
  * @author Sascha Eiteneuer
  * 
  */
-public class PublishingReceiver extends BroadcastReceiver {
+public class PublishingDataReceiver extends BroadcastReceiver {
 	private LibConfig uds = LibConfig.instance;
 	
 	@Override

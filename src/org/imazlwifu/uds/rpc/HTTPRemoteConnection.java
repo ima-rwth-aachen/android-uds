@@ -4,8 +4,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import org.imazlwifu.uds.LibConfig;
 import org.imazlwifu.uds.model.Monitorable;
-import org.imazlwifu.uds.model.LibConfig;
 
 import android.util.Log;
 

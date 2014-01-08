@@ -1,6 +1,5 @@
 package org.imazlwifu.uds;
 
-import org.imazlwifu.uds.model.LibConfig;
 import org.imazlwifu.uds.model.Monitorable;
 
 import android.os.Bundle;
@@ -12,7 +11,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 
 /**
- * TODO
+ * 
  * 
  * @author Sascha Eiteneuer
  *

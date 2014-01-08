@@ -1,11 +1,8 @@
 package org.imazlwifu.uds;
 
-import org.imazlwifu.uds.ipc.StopServiceActivity;
 import org.imazlwifu.uds.model.Battery;
-import org.imazlwifu.uds.model.LibConfig;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +16,8 @@ import android.widget.TextView;
  *
  */
 public class UIActivity extends Activity {
-	UDS uds = null;
+	private LibConfig config;
+	private UDS uds;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +29,33 @@ public class UIActivity extends Activity {
 	}
 	
 	private void setUpUDS() {
-		LibConfig.instance.setMonitoringInterval( 10 );
-		LibConfig.instance.putDefaultMonitorables();
-		LibConfig.instance.putCustomMonitorable( Battery.class );
-		LibConfig.instance.setTextBox( new TextView( this ) );
+		config = (LibConfig) getApplication();
+		// Test Code - not a clean implementation
+		config.setTextBox( new TextView( this ) );
 		
-		uds = LibConfig.instance.getUDS();
+		uds = config.getUDS();
+		uds.setMonitoringInterval( 10 );
+		uds.putMonitoredSensors();
+		uds.putCustomMonitorable( Battery.class );
+/* TODO		
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
+			.addNextIntent( new Intent( this, StopServiceActivity.class) );
+		
+		Notification n = new NotificationCompat.Builder( this )
+			.setContentTitle( "monitoring updated" )
+	    	.setContentText( "swipe down to expand" )
+	    	.setSmallIcon( android.R.drawable.stat_notify_sync_noanim )
+//	    	.setContentInfo( "iteration: "+ iteration )
+	    	.setAutoCancel( true )
+	    	.addAction( android.R.drawable.ic_menu_delete, "stop monitoring", stackBuilder.getPendingIntent( 0, 0 ) )
+//		    	.setContentIntent( stackBuilder.getPendingIntent( 0, 0 ) )
+			.build();
+		*/
+
 	}
 
 	private void uiBinding() {
-		setContentView( LibConfig.instance.getTextBox() );
+		setContentView( config.getTextBox() );
 	}
 
 	@Override
@@ -55,13 +70,13 @@ public class UIActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch( item.getItemId() ) {
 			case 0:
-				startActivityForResult( new Intent( this, PreferencesActivity.class ), 0 );
+				uds.startPreferenceActivity( this );
 				break;
 			case 1:
 				uds.startService();
 				break;
 			case 2:
-				startActivity( new Intent( this, StopServiceActivity.class ) );
+				uds.stopService();
 				break;
 		}
 		

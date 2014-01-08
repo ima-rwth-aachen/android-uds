@@ -1,6 +1,8 @@
 package org.imazlwifu.uds.ipc;
 
+import org.imazlwifu.uds.LibConfig;
 import org.imazlwifu.uds.UDS;
+import org.imazlwifu.uds.model.Monitorable;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -20,19 +22,23 @@ public class ServiceStarter extends BroadcastReceiver {
 	/** true if BOOT_COMPLETED action is received */
 	boolean isBootAction;
 	/** true if preference "auto_start" is set */
-	boolean startOnBoot;
+	boolean startOnBootPref;
 	
 	@Override
 	public void onReceive( Context context, Intent intent ) {
 		isBootAction = intent.getAction().equals( "android.intent.action.BOOT_COMPLETED" );
-		startOnBoot = PreferenceManager.getDefaultSharedPreferences( context ).getBoolean( "auto_start", false );
+		startOnBootPref = PreferenceManager.getDefaultSharedPreferences( context ).getBoolean( "auto_start", false );
 		
 		/* isBootAction		0	0	1	1
 		 * startOnBoot		0	1	0	1
 		 * execute			1	1	0	1
 		 */
-		if( !( isBootAction ^ startOnBoot ) || startOnBoot ) {
-			int interval = intent.getIntExtra( UDS.EXTRA_INTERVAL, UDS.defaultInterval );
+		if( !( isBootAction ^ startOnBootPref ) || startOnBootPref ) {
+			for( Monitorable m : LibConfig.instance.getMonitorables() ) {
+				m.registerListener();
+			}
+			
+			int interval = intent.getIntExtra( UDS.EXTRA_INTERVAL, UDS.DEFAULT_INTERVAL );
 			
 			Log.d( "ServiceStarter", "starting with interval "+ Integer.toString( interval ) );
 			
@@ -42,5 +48,4 @@ public class ServiceStarter extends BroadcastReceiver {
 			alarms.setRepeating( AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval*1000, recurringAlarm );
 		}
 	}
-
 }

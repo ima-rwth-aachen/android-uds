@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     
     <application
-        android:name="org.imazlwifu.uds.model.LibConfig"
+        android:name="org.imazlwifu.uds.LibConfig"
         android:persistent="true"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
@@ -31,10 +31,6 @@
             android:name="org.imazlwifu.uds.PreferencesActivity"
             android:label="@string/app_name" >
         </activity>
-        <activity
-            android:name="org.imazlwifu.uds.ipc.StopServiceActivity"
-            android:label="@string/app_name" >
-        </activity>
 
         <service android:name="org.imazlwifu.uds.DataService" />
 
@@ -45,7 +41,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="org.imazlwifu.uds.ipc.PublishingReceiver" >
+            android:name="org.imazlwifu.uds.ipc.PublishingDataReceiver" >
             <intent-filter>
                 <action android:name="org.imazlwifu.uds.DataBroadcast" />
             </intent-filter>
@@ -55,6 +51,12 @@
             <intent-filter>
                 <action android:name="org.imazlwifu.uds.StartService" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="org.imazlwifu.uds.ipc.ServiceTerminator" >
+            <intent-filter>
+                <action android:name="org.imazlwifu.uds.StopService" />
             </intent-filter>
         </receiver>
     </application>

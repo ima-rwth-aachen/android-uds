@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 
 public class Battery implements Monitorable {
 	public final static String NAME = "Battery";
@@ -15,7 +14,8 @@ public class Battery implements Monitorable {
 	
 	private Context context;
 	
-	public Battery() {
+	public Battery( Context context ) {
+		this.context = context;
 		values = new HashMap<String, Float>();
 	}
 
@@ -43,10 +43,14 @@ public class Battery implements Monitorable {
 	public Map<String, Float> values() {
 		return values;
 	}
-	
+
 	@Override
-	public void setContext( Context context ) {
-		this.context = context;
+	public boolean registerListener() {
+		// nothing to register
+		return false;
 	}
+
+	@Override
+	public void unregisterListener() {}
 
 }

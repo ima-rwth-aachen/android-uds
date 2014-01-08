@@ -1,5 +1,7 @@
-package org.imazlwifu.uds.model;
+package org.imazlwifu.uds;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -7,7 +9,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.imazlwifu.uds.UDS;
+import org.imazlwifu.uds.model.Monitorable;
+import org.imazlwifu.uds.model.MonitoredSensor;
 
 import android.app.Application;
 import android.content.Context;
@@ -72,10 +75,10 @@ public class LibConfig extends Application {
 		
 		setupMonitorables( pref );
 		
-		uds = new UDS( this, preferenceBinding );
+		uds = new UDS( this );
 	}
 	
-	private void setupMonitorables( SharedPreferences pref ) {
+	void setupMonitorables( SharedPreferences pref ) {
 		if( getMonitorables().size() == 0 ) {
 			Log.d( tag, "setup" );
 			
@@ -131,8 +134,10 @@ public class LibConfig extends Application {
 		
 		Monitorable m;
 		try {
-			m = (Monitorable) Class.forName( c.getName() ).newInstance();
-			m.setContext( this );
+			@SuppressWarnings("unchecked")
+			Class<Monitorable> clazz = (Class<Monitorable>) Class.forName( c.getName() );
+			Constructor<Monitorable> ctor = clazz.getConstructor( Context.class );
+			m = ctor.newInstance( this.getApplicationContext() );
 			
 			preferenceBinding.put( m, monitoring );
 			
@@ -144,6 +149,15 @@ public class LibConfig extends Application {
 		} catch( IllegalAccessException e1 ) {
 			e1.printStackTrace();
 		} catch( ClassNotFoundException e1 ) {
+			e1.printStackTrace();
+		} catch (NoSuchMethodException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalArgumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvocationTargetException e1) {
+			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
@@ -215,5 +229,17 @@ public class LibConfig extends Application {
 	public void onLowMemory() {
 		super.onLowMemory();
 		Log.d( tag, "low mem" );
+	}
+
+	Map<Monitorable, Boolean> getBindings() {
+		return preferenceBinding;
+	}
+
+	public boolean getMonitorable(Monitorable m) {
+		for( Monitorable tmp : getMonitorables( true ) )
+			if( tmp.equals( m ) )
+				return true;
+		
+		return false;
 	}
 }

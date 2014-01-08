@@ -9,8 +9,14 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * Wrapper class for <code>android.hardware.Sensor</code>
+ * @author Sascha Eiteneuer
+ *
+ */
 public class MonitoredSensor implements Monitorable, SensorEventListener {
-	SensorManager sensorManager;
+	private SensorManager sensorManager;
+	private SensorEvent lastEvent = null;
 	
 	private Sensor sensor;
 	private Map<String, Float> values;
@@ -30,10 +36,12 @@ public class MonitoredSensor implements Monitorable, SensorEventListener {
 	/**
 	 * <p>
 	 * There might be multiple sensors with the same name.
-	 * E.g. HTTP Post Params behave like a set.
-	 * Therefore a unique key is formed by the expression:
+	 * Because some protocols (e.g. HTTP Post parameters) behave like a set,
+	 * a unique key is formed by the expression:
 	 * </p >
 	 * <p><code style="text-indent:4em;">SensorName + '@' + Integer.toHexString( this.hashCode() )</code></p>
+	 * 
+	 * @return &lt;key, value&gt;
 	 */
 	@Override
 	public Map<String, Float> values() {
@@ -42,7 +50,9 @@ public class MonitoredSensor implements Monitorable, SensorEventListener {
 
 	@Override
 	public void updateData() {
-		sensorManager.registerListener( this, sensor, SensorManager.SENSOR_DELAY_NORMAL );
+		if( lastEvent != null )
+			for( float f : lastEvent.values )
+				values.put( sensor.getName() +'@'+ Integer.toHexString( this.hashCode() ), f );
 	}
 
 	@Override
@@ -52,16 +62,16 @@ public class MonitoredSensor implements Monitorable, SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		for( float f : event.values )
-			values.put( sensor.getName() +'@'+ Integer.toHexString( this.hashCode() ), f );
-
-		sensorManager.unregisterListener( this );
+		lastEvent = event;
 	}
 
 	@Override
-	public void setContext(Context context) {
-		// TODO Auto-generated method stub
-		
+	public boolean registerListener() {
+		return sensorManager.registerListener( this, sensor, SensorManager.SENSOR_DELAY_NORMAL );
 	}
-
+	
+	@Override
+	public void unregisterListener() {
+		sensorManager.unregisterListener( this );
+	}
 }
